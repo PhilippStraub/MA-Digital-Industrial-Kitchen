@@ -1,0 +1,1762 @@
+[
+    {
+        "id": "c6c1af4282b75023",
+        "type": "tab",
+        "label": "Konfiguration",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "6bc489eafcef2c2c",
+        "type": "amqp-in",
+        "z": "c6c1af4282b75023",
+        "name": "",
+        "broker": "e07f836c7f7b9940",
+        "prefetch": 0,
+        "noAck": true,
+        "exchangeName": "Konfiguration",
+        "exchangeType": "direct",
+        "exchangeRoutingKey": "Konfiguration",
+        "exchangeDurable": true,
+        "queueName": "",
+        "queueExclusive": true,
+        "queueDurable": false,
+        "queueAutoDelete": true,
+        "headers": "{}",
+        "x": 240,
+        "y": 1400,
+        "wires": [
+            [
+                "74a628d8d6439781"
+            ]
+        ]
+    },
+    {
+        "id": "8c06d9d3db153e0d",
+        "type": "http in",
+        "z": "c6c1af4282b75023",
+        "name": "",
+        "url": "/konfiguration",
+        "method": "post",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 170,
+        "y": 280,
+        "wires": [
+            [
+                "56f2fb9b648f0916"
+            ]
+        ]
+    },
+    {
+        "id": "56f2fb9b648f0916",
+        "type": "function",
+        "z": "c6c1af4282b75023",
+        "name": "function 28",
+        "func": "msg.bufferOrigin = msg.payload;\n\nmsg.url = \"http://192.168.178.75:1880/buffet/template/\" + msg.bufferOrigin.templateid\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 390,
+        "y": 240,
+        "wires": [
+            [
+                "baa8dd517e6a4be6"
+            ]
+        ]
+    },
+    {
+        "id": "baa8dd517e6a4be6",
+        "type": "http request",
+        "z": "c6c1af4282b75023",
+        "name": "",
+        "method": "GET",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 570,
+        "y": 240,
+        "wires": [
+            [
+                "b563cb7d84072ccb"
+            ]
+        ]
+    },
+    {
+        "id": "8d8f6ca6494a1eb8",
+        "type": "debug",
+        "z": "c6c1af4282b75023",
+        "name": "debug 16",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 960,
+        "y": 160,
+        "wires": []
+    },
+    {
+        "id": "b563cb7d84072ccb",
+        "type": "json",
+        "z": "c6c1af4282b75023",
+        "name": "",
+        "property": "payload",
+        "action": "",
+        "pretty": false,
+        "x": 730,
+        "y": 240,
+        "wires": [
+            [
+                "8d8f6ca6494a1eb8",
+                "89d50ddeaa495edc"
+            ]
+        ]
+    },
+    {
+        "id": "89d50ddeaa495edc",
+        "type": "function",
+        "z": "c6c1af4282b75023",
+        "name": "function 29",
+        "func": "msg.bufferTemplate = msg.payload;\n\nmsg.url = \"http://192.168.178.75:1880/buffet/\" + msg.bufferOrigin.buffets[1].buffetid\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 910,
+        "y": 240,
+        "wires": [
+            [
+                "47465cd06ac9bb93"
+            ]
+        ]
+    },
+    {
+        "id": "4cce1c704479d061",
+        "type": "switch",
+        "z": "c6c1af4282b75023",
+        "name": "",
+        "property": "bufferOrigin.buffets[\"2\"]",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "nnull"
+            },
+            {
+                "t": "null"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 910,
+        "y": 300,
+        "wires": [
+            [
+                "58c8b26b15663811"
+            ],
+            [
+                "8b64486c7a73c81a"
+            ]
+        ]
+    },
+    {
+        "id": "47465cd06ac9bb93",
+        "type": "http request",
+        "z": "c6c1af4282b75023",
+        "name": "",
+        "method": "GET",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 390,
+        "y": 300,
+        "wires": [
+            [
+                "31ded905c13d722a"
+            ]
+        ]
+    },
+    {
+        "id": "f1240d3c5d14db62",
+        "type": "function",
+        "z": "c6c1af4282b75023",
+        "name": "function 30",
+        "func": "\nfor(var i=0;i<msg.payload.length;i++){\n    msg.payload[i]['konfigurationid'] = msg.bufferOrigin.templateid + msg.payload[i]['quersummeid'];\n    delete msg.payload[i]['quersummeid'];\n\n}\n\nfor (var i = 0; i < msg.bufferTemplate.length; i++) {\n    for (var y = 0; y < msg.payload.length; y++) {\n\n        if (msg.bufferTemplate[i].chafingdishid == msg.payload[y]['chafingdishid']) {\n            msg.payload[y]['gericht'] = msg.bufferTemplate[i]['gericht']\n        }\n    }\n}\n\nmsg.bufferBuffet1 = msg.payload;\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 730,
+        "y": 300,
+        "wires": [
+            [
+                "4cce1c704479d061",
+                "7c1d0ade9e8c208b"
+            ]
+        ]
+    },
+    {
+        "id": "31ded905c13d722a",
+        "type": "json",
+        "z": "c6c1af4282b75023",
+        "name": "",
+        "property": "payload",
+        "action": "",
+        "pretty": false,
+        "x": 570,
+        "y": 300,
+        "wires": [
+            [
+                "f1240d3c5d14db62",
+                "7c1d0ade9e8c208b"
+            ]
+        ]
+    },
+    {
+        "id": "58c8b26b15663811",
+        "type": "function",
+        "z": "c6c1af4282b75023",
+        "name": "function 31",
+        "func": "msg.url = \"http://192.168.178.75:1880/buffet/\" + msg.bufferOrigin.buffets[\"2\"].buffetid\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 370,
+        "y": 360,
+        "wires": [
+            [
+                "781c2f2bf4a5be3b"
+            ]
+        ]
+    },
+    {
+        "id": "781c2f2bf4a5be3b",
+        "type": "http request",
+        "z": "c6c1af4282b75023",
+        "name": "",
+        "method": "GET",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 530,
+        "y": 360,
+        "wires": [
+            [
+                "de49c82ec7449e3a"
+            ]
+        ]
+    },
+    {
+        "id": "de49c82ec7449e3a",
+        "type": "json",
+        "z": "c6c1af4282b75023",
+        "name": "",
+        "property": "payload",
+        "action": "",
+        "pretty": false,
+        "x": 670,
+        "y": 360,
+        "wires": [
+            [
+                "778a15e7b53a2357"
+            ]
+        ]
+    },
+    {
+        "id": "778a15e7b53a2357",
+        "type": "function",
+        "z": "c6c1af4282b75023",
+        "name": "function 32",
+        "func": "\nfor (var i = 0; i < msg.payload.length; i++) {\n    msg.payload[i]['konfigurationid'] = msg.bufferOrigin.templateid + msg.payload[i]['quersummeid'];\n    delete msg.payload[i]['quersummeid'];\n}\nfor (var i = 0; i < msg.bufferTemplate.length; i++) {\n    for (var y = 0; y < msg.payload.length; y++) {\n\n        if (msg.bufferTemplate[i].chafingdishid == msg.payload[y]['chafingdishid']) {\n            msg.payload[y]['gericht'] = msg.bufferTemplate[i]['gericht']\n        }\n    }\n}\nmsg.bufferBuffet2 = msg.payload;\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 810,
+        "y": 360,
+        "wires": [
+            [
+                "e008d82b6d02060c"
+            ]
+        ]
+    },
+    {
+        "id": "e008d82b6d02060c",
+        "type": "switch",
+        "z": "c6c1af4282b75023",
+        "name": "",
+        "property": "bufferOrigin.buffets[\"3\"]",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "nnull"
+            },
+            {
+                "t": "null"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 950,
+        "y": 360,
+        "wires": [
+            [
+                "ed66c04940ea3384"
+            ],
+            [
+                "8b64486c7a73c81a"
+            ]
+        ]
+    },
+    {
+        "id": "ed66c04940ea3384",
+        "type": "function",
+        "z": "c6c1af4282b75023",
+        "name": "function 33",
+        "func": "msg.url = \"http://192.168.178.75:1880/buffet/\" + msg.bufferOrigin.buffets[\"3\"].buffetid\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 370,
+        "y": 440,
+        "wires": [
+            [
+                "3b3e3eec0947b607"
+            ]
+        ]
+    },
+    {
+        "id": "3b3e3eec0947b607",
+        "type": "http request",
+        "z": "c6c1af4282b75023",
+        "name": "",
+        "method": "GET",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 530,
+        "y": 440,
+        "wires": [
+            [
+                "0bafe881a459f208"
+            ]
+        ]
+    },
+    {
+        "id": "0bafe881a459f208",
+        "type": "json",
+        "z": "c6c1af4282b75023",
+        "name": "",
+        "property": "payload",
+        "action": "",
+        "pretty": false,
+        "x": 670,
+        "y": 440,
+        "wires": [
+            [
+                "0b0d20c7128111c6"
+            ]
+        ]
+    },
+    {
+        "id": "0b0d20c7128111c6",
+        "type": "function",
+        "z": "c6c1af4282b75023",
+        "name": "function 34",
+        "func": "\nfor (var i = 0; i < msg.payload.length; i++) {\n    msg.payload[i]['konfigurationid'] = msg.bufferOrigin.templateid + msg.payload[i]['quersummeid'];\n    delete msg.payload[i]['quersummeid'];\n}\nfor (var i = 0; i < msg.bufferTemplate.length; i++) {\n    for (var y = 0; y < msg.payload.length; y++) {\n\n        if (msg.bufferTemplate[i].chafingdishid == msg.payload[y]['chafingdishid']) {\n            msg.payload[y]['gericht'] = msg.bufferTemplate[i]['gericht']\n        }\n    }\n}\nmsg.bufferBuffet3 = msg.payload;\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 810,
+        "y": 440,
+        "wires": [
+            [
+                "8b64486c7a73c81a"
+            ]
+        ]
+    },
+    {
+        "id": "8b64486c7a73c81a",
+        "type": "postgresql",
+        "z": "c6c1af4282b75023",
+        "name": "Prüfe ob Tabelle buffet vorhanden",
+        "query": "SELECT EXISTS (SELECT FROM information_schema.tables WHERE table_name = 'konfiguration')",
+        "postgreSQLConfig": "de8efd55fbc380cc",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 1080,
+        "y": 440,
+        "wires": [
+            [
+                "34b1d399ed1da72a"
+            ]
+        ]
+    },
+    {
+        "id": "34b1d399ed1da72a",
+        "type": "switch",
+        "z": "c6c1af4282b75023",
+        "name": "",
+        "property": "payload[0].exists",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "false"
+            },
+            {
+                "t": "true"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 350,
+        "y": 540,
+        "wires": [
+            [
+                "411bb44e861b52f9"
+            ],
+            [
+                "0a0d165339c68ada"
+            ]
+        ]
+    },
+    {
+        "id": "411bb44e861b52f9",
+        "type": "postgresql",
+        "z": "c6c1af4282b75023",
+        "name": "Erstelle Tabelle",
+        "query": "CREATE TABLE konfiguration (id integer PRIMARY KEY, aktivationid TEXT, buffetid TEXT, chafingdishid TEXT, uuidedgedevice TEXT, gericht TEXT, templateid TEXT)",
+        "postgreSQLConfig": "de8efd55fbc380cc",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 540,
+        "y": 520,
+        "wires": [
+            [
+                "8467f721eb8af11f",
+                "0a0d165339c68ada"
+            ]
+        ]
+    },
+    {
+        "id": "8467f721eb8af11f",
+        "type": "function",
+        "z": "c6c1af4282b75023",
+        "name": "function 36",
+        "func": "node.warn(\"Tabelle konfiguration erstellt\");",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 710,
+        "y": 520,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "e0de385983c60963",
+        "type": "postgresql",
+        "z": "c6c1af4282b75023",
+        "name": "Prüfe ob Tabelle konfiguration_aktivation vorhanden",
+        "query": "SELECT EXISTS (SELECT FROM information_schema.tables WHERE table_name = 'konfiguration_aktivation')",
+        "postgreSQLConfig": "de8efd55fbc380cc",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 1730,
+        "y": 600,
+        "wires": [
+            [
+                "17b80bc1fc070374"
+            ]
+        ]
+    },
+    {
+        "id": "17b80bc1fc070374",
+        "type": "switch",
+        "z": "c6c1af4282b75023",
+        "name": "",
+        "property": "payload[0].exists",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "false"
+            },
+            {
+                "t": "true"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 2010,
+        "y": 600,
+        "wires": [
+            [
+                "805f4c01cfb86584"
+            ],
+            [
+                "384ad838fb1afdf0"
+            ]
+        ]
+    },
+    {
+        "id": "805f4c01cfb86584",
+        "type": "postgresql",
+        "z": "c6c1af4282b75023",
+        "name": "Erstelle Tabelle",
+        "query": "CREATE TABLE konfiguration_aktivation (id TEXT PRIMARY KEY, aktiv BOOLEAN, veranstaltungname TEXT, veranstaltungdatum TEXT)",
+        "postgreSQLConfig": "de8efd55fbc380cc",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 1640,
+        "y": 660,
+        "wires": [
+            [
+                "a6fc2ac6b05312b2"
+            ]
+        ]
+    },
+    {
+        "id": "a6fc2ac6b05312b2",
+        "type": "function",
+        "z": "c6c1af4282b75023",
+        "name": "function 38",
+        "func": "node.warn(\"Tabelle konfiguration_aktivation erstellt\");\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1830,
+        "y": 660,
+        "wires": [
+            [
+                "384ad838fb1afdf0"
+            ]
+        ]
+    },
+    {
+        "id": "7c1d0ade9e8c208b",
+        "type": "debug",
+        "z": "c6c1af4282b75023",
+        "name": "debug 17",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1240,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "0a0d165339c68ada",
+        "type": "switch",
+        "z": "c6c1af4282b75023",
+        "name": "",
+        "property": "bufferBuffet3",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "null"
+            },
+            {
+                "t": "nnull"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 330,
+        "y": 1000,
+        "wires": [
+            [
+                "de0bf1234545b0d6"
+            ],
+            [
+                "e635948bb796b855"
+            ]
+        ]
+    },
+    {
+        "id": "de0bf1234545b0d6",
+        "type": "switch",
+        "z": "c6c1af4282b75023",
+        "name": "",
+        "property": "bufferBuffet2",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "null"
+            },
+            {
+                "t": "nnull"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 530,
+        "y": 780,
+        "wires": [
+            [
+                "82d592ceb3049e2c"
+            ],
+            [
+                "66ecee9897e2fc2c"
+            ]
+        ]
+    },
+    {
+        "id": "26d2cad60516b5c4",
+        "type": "comment",
+        "z": "c6c1af4282b75023",
+        "name": "3 Buffets",
+        "info": "",
+        "x": 320,
+        "y": 1040,
+        "wires": []
+    },
+    {
+        "id": "26db9946b206053a",
+        "type": "comment",
+        "z": "c6c1af4282b75023",
+        "name": "2 Buffets",
+        "info": "",
+        "x": 520,
+        "y": 840,
+        "wires": []
+    },
+    {
+        "id": "cf7f85f41d5e9750",
+        "type": "comment",
+        "z": "c6c1af4282b75023",
+        "name": "1 Buffet",
+        "info": "",
+        "x": 530,
+        "y": 620,
+        "wires": []
+    },
+    {
+        "id": "82d592ceb3049e2c",
+        "type": "postgresql",
+        "z": "c6c1af4282b75023",
+        "name": "Prüfung Template id & Buffet id kombination//Müsste veranstaltungid sein",
+        "query": "\nSELECT EXISTS (SELECT FROM konfiguration WHERE templateid = '{{msg.bufferOrigin.templateid}}' AND  buffetid = '{{msg.bufferOrigin.buffets.1.buffetid}}')\n\n",
+        "postgreSQLConfig": "de8efd55fbc380cc",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 900,
+        "y": 620,
+        "wires": [
+            [
+                "c51ef97ff672ea2f"
+            ]
+        ]
+    },
+    {
+        "id": "384ad838fb1afdf0",
+        "type": "postgresql",
+        "z": "c6c1af4282b75023",
+        "name": "insert",
+        "query": "INSERT INTO konfiguration_aktivation (id, aktiv, veranstaltungname, veranstaltungdatum) \nVALUES ('{{msg.bufferOrigin.veranstaltungid}}', false, '{{msg.bufferOrigin.veranstaltungname}}', '{{msg.bufferOrigin.veranstaltungdatum}}')\n",
+        "postgreSQLConfig": "de8efd55fbc380cc",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 2030,
+        "y": 660,
+        "wires": [
+            [
+                "b8cf5bacb8a7b182"
+            ]
+        ]
+    },
+    {
+        "id": "02791cac2fbf2014",
+        "type": "postgresql",
+        "z": "c6c1af4282b75023",
+        "name": "insert",
+        "query": "INSERT INTO konfiguration (id, aktivationid, buffetid, chafingdishid, uuidedgedevice, gericht, templateid) \nVALUES ('{{msg.bufferBuffet1.0.konfigurationid}}', '{{msg.bufferOrigin.veranstaltungid}}', \n'{{msg.bufferBuffet1.0.buffetid}}', '{{msg.bufferBuffet1.0.chafingdishid}}', '{{msg.bufferBuffet1.0.uuid}}', '{{msg.bufferBuffet1.0.gericht}}', '{{msg.bufferOrigin.templateid}}')\n\n",
+        "postgreSQLConfig": "de8efd55fbc380cc",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 1230,
+        "y": 600,
+        "wires": [
+            [
+                "421e3feb71fbf472"
+            ]
+        ]
+    },
+    {
+        "id": "c51ef97ff672ea2f",
+        "type": "switch",
+        "z": "c6c1af4282b75023",
+        "name": "",
+        "property": "payload[0].exists",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "false"
+            },
+            {
+                "t": "true"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 1070,
+        "y": 620,
+        "wires": [
+            [
+                "02791cac2fbf2014"
+            ],
+            [
+                "896d32886eb1265e"
+            ]
+        ]
+    },
+    {
+        "id": "896d32886eb1265e",
+        "type": "postgresql",
+        "z": "c6c1af4282b75023",
+        "name": "Entferne alte Zuweisung der Template",
+        "query": "DELETE FROM konfiguration WHERE templateid = '{{msg.bufferOrigin.templateid}}' AND buffetid = '{{msg.bufferBuffet1.0.buffetid}}'\n",
+        "postgreSQLConfig": "de8efd55fbc380cc",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 1290,
+        "y": 660,
+        "wires": [
+            [
+                "02791cac2fbf2014"
+            ]
+        ]
+    },
+    {
+        "id": "0726e257614002d0",
+        "type": "function",
+        "z": "c6c1af4282b75023",
+        "name": "function 39",
+        "func": "\nfor (var i = 0; i < msg.bufferBuffet1.length-1; i++) {\n    msg.bufferBuffet1[i] = msg.bufferBuffet1[i+1]\n}\ndelete msg.bufferBuffet1[msg.bufferBuffet1.length-1];\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1050,
+        "y": 580,
+        "wires": [
+            [
+                "02791cac2fbf2014"
+            ]
+        ]
+    },
+    {
+        "id": "421e3feb71fbf472",
+        "type": "switch",
+        "z": "c6c1af4282b75023",
+        "name": "",
+        "property": "bufferBuffet1.1",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "nnull"
+            },
+            {
+                "t": "null"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 1350,
+        "y": 600,
+        "wires": [
+            [
+                "0726e257614002d0"
+            ],
+            [
+                "e0de385983c60963"
+            ]
+        ]
+    },
+    {
+        "id": "a4ab79ae22ad1907",
+        "type": "http response",
+        "z": "c6c1af4282b75023",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 1850,
+        "y": 780,
+        "wires": []
+    },
+    {
+        "id": "b8cf5bacb8a7b182",
+        "type": "function",
+        "z": "c6c1af4282b75023",
+        "name": "function 40",
+        "func": "\nmsg.payload = \"Konfiguration für Veranstaltung \"+ msg.bufferOrigin.veranstaltungname + \" wurde erfolgreich erstellt.\"\n\nmsg.statusCode= 200;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1690,
+        "y": 780,
+        "wires": [
+            [
+                "a4ab79ae22ad1907"
+            ]
+        ]
+    },
+    {
+        "id": "66ecee9897e2fc2c",
+        "type": "postgresql",
+        "z": "c6c1af4282b75023",
+        "name": "Prüfung Template id & Buffet id kombination",
+        "query": "\nSELECT EXISTS (SELECT FROM konfiguration WHERE templateid = '{{msg.bufferOrigin.templateid}}' AND  buffetid = '{{msg.bufferOrigin.buffets.2.buffetid}}')\n\n",
+        "postgreSQLConfig": "de8efd55fbc380cc",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 790,
+        "y": 800,
+        "wires": [
+            [
+                "d80f659b1a38b07a"
+            ]
+        ]
+    },
+    {
+        "id": "23372dede47fc676",
+        "type": "postgresql",
+        "z": "c6c1af4282b75023",
+        "name": "insert",
+        "query": "INSERT INTO konfiguration (id, aktivationid, buffetid, chafingdishid, uuidedgedevice, gericht, templateid) \nVALUES ('{{msg.bufferBuffet2.0.konfigurationid}}', '{{msg.bufferOrigin.veranstaltungid}}', \n'{{msg.bufferBuffet2.0.buffetid}}', '{{msg.bufferBuffet2.0.chafingdishid}}', '{{msg.bufferBuffet2.0.uuid}}', '{{msg.bufferBuffet2.0.gericht}}', '{{msg.bufferOrigin.templateid}}')\n\n",
+        "postgreSQLConfig": "de8efd55fbc380cc",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 1186.765625,
+        "y": 781.75,
+        "wires": [
+            [
+                "0b978a540b5ea09b"
+            ]
+        ]
+    },
+    {
+        "id": "d80f659b1a38b07a",
+        "type": "switch",
+        "z": "c6c1af4282b75023",
+        "name": "",
+        "property": "payload[0].exists",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "false"
+            },
+            {
+                "t": "true"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 1026.765625,
+        "y": 801.75,
+        "wires": [
+            [
+                "23372dede47fc676"
+            ],
+            [
+                "5db43219ada27519"
+            ]
+        ]
+    },
+    {
+        "id": "5db43219ada27519",
+        "type": "postgresql",
+        "z": "c6c1af4282b75023",
+        "name": "Entferne alte Zuweisung der Template",
+        "query": "DELETE FROM konfiguration WHERE templateid = '{{msg.bufferOrigin.templateid}}' AND buffetid = '{{msg.bufferBuffet2.0.buffetid}}'\n",
+        "postgreSQLConfig": "de8efd55fbc380cc",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 1346.765625,
+        "y": 841.75,
+        "wires": [
+            [
+                "23372dede47fc676"
+            ]
+        ]
+    },
+    {
+        "id": "babd8905f54ae33f",
+        "type": "function",
+        "z": "c6c1af4282b75023",
+        "name": "function 41",
+        "func": "for (var i = 0; i < msg.bufferBuffet2.length-1; i++) {\n    msg.bufferBuffet2[i] = msg.bufferBuffet2[i+1]\n}\ndelete msg.bufferBuffet2[msg.bufferBuffet2.length-1];\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1026.765625,
+        "y": 761.75,
+        "wires": [
+            [
+                "23372dede47fc676"
+            ]
+        ]
+    },
+    {
+        "id": "0b978a540b5ea09b",
+        "type": "switch",
+        "z": "c6c1af4282b75023",
+        "name": "",
+        "property": "bufferBuffet2.1",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "nnull"
+            },
+            {
+                "t": "null"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 1306.765625,
+        "y": 781.75,
+        "wires": [
+            [
+                "babd8905f54ae33f"
+            ],
+            [
+                "82d592ceb3049e2c"
+            ]
+        ]
+    },
+    {
+        "id": "e635948bb796b855",
+        "type": "postgresql",
+        "z": "c6c1af4282b75023",
+        "name": "Prüfung Template id & Buffet id kombination",
+        "query": "\nSELECT EXISTS (SELECT FROM konfiguration WHERE templateid = '{{msg.bufferOrigin.templateid}}' AND  buffetid = '{{msg.bufferOrigin.buffets.3.buffetid}}')\n\n",
+        "postgreSQLConfig": "de8efd55fbc380cc",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 790,
+        "y": 1000,
+        "wires": [
+            [
+                "ccf3672b5929559e"
+            ]
+        ]
+    },
+    {
+        "id": "e62aadbd23f50dbf",
+        "type": "postgresql",
+        "z": "c6c1af4282b75023",
+        "name": "insert",
+        "query": "INSERT INTO konfiguration (id, aktivationid, buffetid, chafingdishid, uuidedgedevice, gericht, templateid) \nVALUES ('{{msg.bufferBuffet3.0.konfigurationid}}', '{{msg.bufferOrigin.veranstaltungid}}', \n'{{msg.bufferBuffet3.0.buffetid}}', '{{msg.bufferBuffet3.0.chafingdishid}}', '{{msg.bufferBuffet3.0.uuid}}', '{{msg.bufferBuffet3.0.gericht}}', '{{msg.bufferOrigin.templateid}}')\n\n",
+        "postgreSQLConfig": "de8efd55fbc380cc",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 1186.765625,
+        "y": 981.75,
+        "wires": [
+            [
+                "0cb87a08b8d6db12"
+            ]
+        ]
+    },
+    {
+        "id": "ccf3672b5929559e",
+        "type": "switch",
+        "z": "c6c1af4282b75023",
+        "name": "",
+        "property": "payload[0].exists",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "false"
+            },
+            {
+                "t": "true"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 1026.765625,
+        "y": 1001.75,
+        "wires": [
+            [
+                "e62aadbd23f50dbf"
+            ],
+            [
+                "5346754c790f12d5"
+            ]
+        ]
+    },
+    {
+        "id": "5346754c790f12d5",
+        "type": "postgresql",
+        "z": "c6c1af4282b75023",
+        "name": "Entferne alte Zuweisung der Template",
+        "query": "DELETE FROM konfiguration WHERE templateid = '{{msg.bufferOrigin.templateid}}' AND buffetid = '{{msg.bufferBuffet3.0.buffetid}}'\n",
+        "postgreSQLConfig": "de8efd55fbc380cc",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 1346.765625,
+        "y": 1041.75,
+        "wires": [
+            [
+                "e62aadbd23f50dbf"
+            ]
+        ]
+    },
+    {
+        "id": "b5da60ff3be7f16f",
+        "type": "function",
+        "z": "c6c1af4282b75023",
+        "name": "function 42",
+        "func": "for (var i = 0; i < msg.bufferBuffet3.length-1; i++) {\n    msg.bufferBuffet3[i] = msg.bufferBuffet3[i+1]\n}\ndelete msg.bufferBuffet3[msg.bufferBuffet3.length-1];\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1026.765625,
+        "y": 961.75,
+        "wires": [
+            [
+                "e62aadbd23f50dbf"
+            ]
+        ]
+    },
+    {
+        "id": "0cb87a08b8d6db12",
+        "type": "switch",
+        "z": "c6c1af4282b75023",
+        "name": "",
+        "property": "bufferBuffet3.1",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "nnull"
+            },
+            {
+                "t": "null"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 1306.765625,
+        "y": 981.75,
+        "wires": [
+            [
+                "b5da60ff3be7f16f"
+            ],
+            [
+                "66ecee9897e2fc2c"
+            ]
+        ]
+    },
+    {
+        "id": "48aea8f6853e52bb",
+        "type": "http in",
+        "z": "c6c1af4282b75023",
+        "name": "",
+        "url": "/konfiguration/:konfiguration/activate",
+        "method": "post",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 269.765625,
+        "y": 1240.75,
+        "wires": [
+            [
+                "820f58df610b707c"
+            ]
+        ]
+    },
+    {
+        "id": "820f58df610b707c",
+        "type": "postgresql",
+        "z": "c6c1af4282b75023",
+        "name": "",
+        "query": "\nUPDATE konfiguration_aktivation SET aktiv = true\nWHERE id = '{{msg.req.params.konfiguration}}'\n",
+        "postgreSQLConfig": "de8efd55fbc380cc",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 790,
+        "y": 1240,
+        "wires": [
+            [
+                "1d45421f139e1e41",
+                "c8c41965a1441543"
+            ]
+        ]
+    },
+    {
+        "id": "a230352212139a55",
+        "type": "http in",
+        "z": "c6c1af4282b75023",
+        "name": "",
+        "url": "/konfiguration/:konfiguration/deactivate",
+        "method": "post",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 290,
+        "y": 1320,
+        "wires": [
+            [
+                "922bf8afa59f74cd"
+            ]
+        ]
+    },
+    {
+        "id": "922bf8afa59f74cd",
+        "type": "postgresql",
+        "z": "c6c1af4282b75023",
+        "name": "",
+        "query": "\nUPDATE konfiguration_aktivation SET aktiv = false\nWHERE id = '{{msg.req.params.konfiguration}}'",
+        "postgreSQLConfig": "de8efd55fbc380cc",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 830,
+        "y": 1320,
+        "wires": [
+            [
+                "1d45421f139e1e41"
+            ]
+        ]
+    },
+    {
+        "id": "1d45421f139e1e41",
+        "type": "json",
+        "z": "c6c1af4282b75023",
+        "name": "",
+        "property": "payload",
+        "action": "",
+        "pretty": false,
+        "x": 1010,
+        "y": 1280,
+        "wires": [
+            [
+                "2d55ed50756f2664"
+            ]
+        ]
+    },
+    {
+        "id": "2d55ed50756f2664",
+        "type": "http response",
+        "z": "c6c1af4282b75023",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 1210,
+        "y": 1260,
+        "wires": []
+    },
+    {
+        "id": "d5cebef7a2f063e9",
+        "type": "inject",
+        "z": "c6c1af4282b75023",
+        "name": "",
+        "props": [],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": "5",
+        "topic": "",
+        "x": 390,
+        "y": 1800,
+        "wires": [
+            [
+                "c2fd5407309c177b",
+                "f4970e0e1af8f91d"
+            ]
+        ]
+    },
+    {
+        "id": "c2fd5407309c177b",
+        "type": "function",
+        "z": "c6c1af4282b75023",
+        "name": "function 43",
+        "func": "node.warn(\"Prüfe, ob Konfiguration aktiv..\");\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 610,
+        "y": 1780,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "f4970e0e1af8f91d",
+        "type": "postgresql",
+        "z": "c6c1af4282b75023",
+        "name": "",
+        "query": "SELECT * FROM konfiguration_aktivation WHERE aktiv = true;",
+        "postgreSQLConfig": "de8efd55fbc380cc",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 590,
+        "y": 1860,
+        "wires": [
+            [
+                "08c58fc4f57bc2a6"
+            ]
+        ]
+    },
+    {
+        "id": "08c58fc4f57bc2a6",
+        "type": "switch",
+        "z": "c6c1af4282b75023",
+        "name": "",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "empty"
+            },
+            {
+                "t": "nempty"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 770,
+        "y": 1820,
+        "wires": [
+            [
+                "b14c4999634f4609"
+            ],
+            [
+                "5b4e1bdcd2cdfef3"
+            ]
+        ]
+    },
+    {
+        "id": "b14c4999634f4609",
+        "type": "function",
+        "z": "c6c1af4282b75023",
+        "name": "function 44",
+        "func": "node.warn(\"Kein Konfiguration aktiv, warte auf manuelle Aktivierung.\");\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 910,
+        "y": 1740,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "5b4e1bdcd2cdfef3",
+        "type": "function",
+        "z": "c6c1af4282b75023",
+        "name": "function 45",
+        "func": "node.warn(\"Konfiguration aktiv, wende diese an.\");\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 924.765625,
+        "y": 1868.75,
+        "wires": [
+            [
+                "c8c41965a1441543"
+            ]
+        ]
+    },
+    {
+        "id": "98e92fe17ec1e81f",
+        "type": "postgresql",
+        "z": "c6c1af4282b75023",
+        "name": "",
+        "query": "DROP TABLE konfiguration_aktivation;\nDROP TABLE konfiguration;",
+        "postgreSQLConfig": "de8efd55fbc380cc",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 1790,
+        "y": 380,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "188a65f6f7e0fa3d",
+        "type": "inject",
+        "z": "c6c1af4282b75023",
+        "name": "",
+        "props": [],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "x": 1550,
+        "y": 380,
+        "wires": [
+            [
+                "98e92fe17ec1e81f"
+            ]
+        ]
+    },
+    {
+        "id": "c8c41965a1441543",
+        "type": "postgresql",
+        "z": "c6c1af4282b75023",
+        "name": "",
+        "query": "SELECT id,veranstaltungname FROM konfiguration_aktivation WHERE aktiv = true;",
+        "postgreSQLConfig": "de8efd55fbc380cc",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 470,
+        "y": 1480,
+        "wires": [
+            [
+                "c0fa02faeb11d87b"
+            ]
+        ]
+    },
+    {
+        "id": "c0fa02faeb11d87b",
+        "type": "switch",
+        "z": "c6c1af4282b75023",
+        "name": "",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "empty"
+            },
+            {
+                "t": "nempty"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 650,
+        "y": 1480,
+        "wires": [
+            [
+                "474cd6d398de282d"
+            ],
+            [
+                "08357644edcb2ded"
+            ]
+        ]
+    },
+    {
+        "id": "474cd6d398de282d",
+        "type": "function",
+        "z": "c6c1af4282b75023",
+        "name": "function 46",
+        "func": "node.warn(\"Kein Konfiguration aktiv, warte auf manuelle Aktivierung.\");\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 710,
+        "y": 1400,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "74a628d8d6439781",
+        "type": "function",
+        "z": "c6c1af4282b75023",
+        "name": "function 47",
+        "func": "msg.buffer = msg.payload;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 470,
+        "y": 1400,
+        "wires": [
+            [
+                "c8c41965a1441543"
+            ]
+        ]
+    },
+    {
+        "id": "05cae45b441ca795",
+        "type": "postgresql",
+        "z": "c6c1af4282b75023",
+        "name": "",
+        "query": "SELECT buffetid, chafingdishid, uuidedgedevice, gericht FROM konfiguration WHERE aktivationid = '{{msg.bufferKonfigAktiv.0.id}}';",
+        "postgreSQLConfig": "de8efd55fbc380cc",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 1050,
+        "y": 1480,
+        "wires": [
+            [
+                "abf7459f6d19a048"
+            ]
+        ]
+    },
+    {
+        "id": "08357644edcb2ded",
+        "type": "function",
+        "z": "c6c1af4282b75023",
+        "name": "function 48",
+        "func": "msg.bufferKonfigAktiv = msg.payload;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 810,
+        "y": 1480,
+        "wires": [
+            [
+                "05cae45b441ca795",
+                "9c9670b2e7967e05"
+            ]
+        ]
+    },
+    {
+        "id": "e3834afbd175dc8a",
+        "type": "amqp-out",
+        "z": "c6c1af4282b75023",
+        "name": "",
+        "broker": "e07f836c7f7b9940",
+        "exchangeName": "Ueberwachung",
+        "exchangeType": "direct",
+        "exchangeRoutingKey": "Ueberwachung",
+        "exchangeRoutingKeyType": "str",
+        "exchangeDurable": true,
+        "amqpProperties": "{ \"headers\": {} }",
+        "rpcTimeoutMilliseconds": 3000,
+        "outputs": 0,
+        "x": 1810,
+        "y": 1480,
+        "wires": []
+    },
+    {
+        "id": "23fd95faa8e8c4d6",
+        "type": "comment",
+        "z": "c6c1af4282b75023",
+        "name": "Konfig wird manuell aktiviert",
+        "info": "",
+        "x": 220,
+        "y": 1200,
+        "wires": []
+    },
+    {
+        "id": "5fa63a3b74b65afc",
+        "type": "switch",
+        "z": "c6c1af4282b75023",
+        "name": "",
+        "property": "msg.bufferKonfigAktiv.1",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "nnull"
+            },
+            {
+                "t": "null"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 1490,
+        "y": 1480,
+        "wires": [
+            [
+                "5a40c3d53f32a8b5",
+                "e3834afbd175dc8a"
+            ],
+            [
+                "e3834afbd175dc8a"
+            ]
+        ]
+    },
+    {
+        "id": "5a40c3d53f32a8b5",
+        "type": "function",
+        "z": "c6c1af4282b75023",
+        "name": "function 49",
+        "func": "\nfor (var i = 0; i < msg.bufferKonfigAktiv.length-1; i++) {\n    msg.bufferKonfigAktiv[i] = msg.bufferKonfigAktiv[i+1]\n}\ndelete msg.bufferKonfigAktiv[msg.bufferKonfigAktiv.length-1];\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 990,
+        "y": 1400,
+        "wires": [
+            [
+                "05cae45b441ca795"
+            ]
+        ]
+    },
+    {
+        "id": "3991163980f206ae",
+        "type": "comment",
+        "z": "c6c1af4282b75023",
+        "name": "Konfig wird von Edge angefordert",
+        "info": "",
+        "x": 193.8958282470703,
+        "y": 1530.888916015625,
+        "wires": []
+    },
+    {
+        "id": "b57eb724caf52dd3",
+        "type": "comment",
+        "z": "c6c1af4282b75023",
+        "name": "Konfig wird bei Neustart gesendet, wenn aktiv",
+        "info": "",
+        "x": 250,
+        "y": 1760,
+        "wires": []
+    },
+    {
+        "id": "9c9670b2e7967e05",
+        "type": "debug",
+        "z": "c6c1af4282b75023",
+        "name": "debug 23",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1440,
+        "y": 1660,
+        "wires": []
+    },
+    {
+        "id": "abf7459f6d19a048",
+        "type": "function",
+        "z": "c6c1af4282b75023",
+        "name": "function 54",
+        "func": "for(var i=0;i<msg.payload.length;i++){\n    msg.payload[i].veranstaltung = msg.bufferKonfigAktiv[0].veranstaltungname;\n}\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1270,
+        "y": 1480,
+        "wires": [
+            [
+                "5fa63a3b74b65afc",
+                "9c9670b2e7967e05"
+            ]
+        ]
+    },
+    {
+        "id": "ad51d70a7f1171e8",
+        "type": "mqtt out",
+        "z": "c6c1af4282b75023",
+        "name": "",
+        "topic": "",
+        "qos": "",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "0e8b8bed91e98cd3",
+        "x": 830,
+        "y": 2120,
+        "wires": []
+    },
+    {
+        "id": "3bfdc9abd4cd06b7",
+        "type": "inject",
+        "z": "c6c1af4282b75023",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": "8",
+        "topic": "active/konfiguration",
+        "payload": "Aktiv",
+        "payloadType": "str",
+        "x": 530,
+        "y": 2120,
+        "wires": [
+            [
+                "ad51d70a7f1171e8"
+            ]
+        ]
+    },
+    {
+        "id": "7314bf46540f4f9b",
+        "type": "comment",
+        "z": "c6c1af4282b75023",
+        "name": "Löscht erstellte Tabellen",
+        "info": "",
+        "x": 1580,
+        "y": 340,
+        "wires": []
+    },
+    {
+        "id": "e07f836c7f7b9940",
+        "type": "amqp-broker",
+        "name": "rabbitmq",
+        "host": "192.168.178.75",
+        "port": "5672",
+        "vhost": "",
+        "tls": false,
+        "credsFromSettings": false
+    },
+    {
+        "id": "de8efd55fbc380cc",
+        "type": "postgreSQLConfig",
+        "name": "postgres",
+        "host": "192.168.178.75",
+        "hostFieldType": "str",
+        "port": "5432",
+        "portFieldType": "num",
+        "database": "ueberwachungbuffet",
+        "databaseFieldType": "str",
+        "ssl": "false",
+        "sslFieldType": "bool",
+        "applicationName": "nodered",
+        "applicationNameType": "str",
+        "max": "10",
+        "maxFieldType": "num",
+        "idle": "1000",
+        "idleFieldType": "num",
+        "connectionTimeout": "10000",
+        "connectionTimeoutFieldType": "num",
+        "user": "admin",
+        "userFieldType": "str",
+        "password": "admin",
+        "passwordFieldType": "str"
+    },
+    {
+        "id": "0e8b8bed91e98cd3",
+        "type": "mqtt-broker",
+        "name": "Konfiguration Broker",
+        "broker": "192.168.178.75",
+        "port": "1883",
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": "4",
+        "keepalive": "60",
+        "cleansession": true,
+        "birthTopic": "error/konfiguration",
+        "birthQos": "0",
+        "birthPayload": "Verbindung zum Broker verloren",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    }
+]

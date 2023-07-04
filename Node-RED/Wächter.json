@@ -1,0 +1,738 @@
+[
+    {
+        "id": "896be21a748ac97b",
+        "type": "tab",
+        "label": "Wächter",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "67e6a8f809de45f8",
+        "type": "mqtt in",
+        "z": "896be21a748ac97b",
+        "name": "",
+        "topic": "$SYS/broker/uptime",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "74ad56f2bfa2e69f",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 490,
+        "y": 580,
+        "wires": [
+            [
+                "d7d10fe46aa553de"
+            ]
+        ]
+    },
+    {
+        "id": "e3a9bd27791c6669",
+        "type": "mqtt in",
+        "z": "896be21a748ac97b",
+        "name": "",
+        "topic": "error/#",
+        "qos": "0",
+        "datatype": "auto-detect",
+        "broker": "74ad56f2bfa2e69f",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 430,
+        "y": 240,
+        "wires": [
+            [
+                "57d43df40d36bf64"
+            ]
+        ]
+    },
+    {
+        "id": "773cb0f400411af6",
+        "type": "mqtt in",
+        "z": "896be21a748ac97b",
+        "name": "",
+        "topic": "active/#",
+        "qos": "0",
+        "datatype": "auto-detect",
+        "broker": "74ad56f2bfa2e69f",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 430,
+        "y": 300,
+        "wires": [
+            [
+                "534d5f05320b8e97"
+            ]
+        ]
+    },
+    {
+        "id": "58893f709742076b",
+        "type": "mqtt in",
+        "z": "896be21a748ac97b",
+        "name": "",
+        "topic": "veranstaltung/+/buffet/+/chafingdish/+",
+        "qos": "0",
+        "datatype": "auto-detect",
+        "broker": "74ad56f2bfa2e69f",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 530,
+        "y": 380,
+        "wires": [
+            [
+                "5f8de0d7012bb1dd"
+            ]
+        ]
+    },
+    {
+        "id": "48097847f20859c1",
+        "type": "function",
+        "z": "896be21a748ac97b",
+        "name": "function 63",
+        "func": "\nvar system = msg.topic.slice(6)\n\nif(global.get(\"active\")){\n    var active2 = global.get(\"active\")\n    active2[system] = false\n    global.set(\"active\", active2);\n\n} else {\n    var active = {};\n    active[system] = false\n    global.set(\"active\", active);\n}\n\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 710,
+        "y": 240,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "534d5f05320b8e97",
+        "type": "function",
+        "z": "896be21a748ac97b",
+        "name": "function 64",
+        "func": "var system = msg.topic.slice(7)\n\nif(global.get(\"active\")){\n    var active2 = global.get(\"active\")\n    active2[system] = true\n    global.set(\"active\", active2);\n\n} else {\n    var active = {};\n    active[system] = true\n    global.set(\"active\", active);\n}\n\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 673.8958129882812,
+        "y": 299.8888854980469,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "5f8de0d7012bb1dd",
+        "type": "function",
+        "z": "896be21a748ac97b",
+        "name": "function 65",
+        "func": "var system = 'ueberwachungedge/'+msg.topic;\nvar name = msg.topic.slice(msg.topic.indexOf(\"/\", 2) + 1, msg.topic.indexOf(\"/buffet\"))\n\nif(global.get(name)){\n    var active2 = global.get(name)\n    active2[system] = true\n    global.set(name, active2);\n\n} else {\n    var active = {};\n    active[system] = true\n    global.set(name, active);\n}\n\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 810,
+        "y": 380,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "17c021a3584ce4cd",
+        "type": "http in",
+        "z": "896be21a748ac97b",
+        "name": "",
+        "url": "/waechter/core",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 490,
+        "y": 460,
+        "wires": [
+            [
+                "3cedf30778c58237"
+            ]
+        ]
+    },
+    {
+        "id": "3cedf30778c58237",
+        "type": "function",
+        "z": "896be21a748ac97b",
+        "name": "function 66",
+        "func": "var active = global.get(\"active\");\nlet vertrauenswuerdigCheck = true;\nfor (let key in active) {\n    if (active[key] === false) {\n        vertrauenswuerdigCheck = false;\n        break;\n    }\n}\n\n\n\nmsg.payload = {\n    vertrauenswuerdig: vertrauenswuerdigCheck,\n    active\n}\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 690,
+        "y": 460,
+        "wires": [
+            [
+                "1a49c1ec0aa894e4"
+            ]
+        ]
+    },
+    {
+        "id": "1a49c1ec0aa894e4",
+        "type": "http response",
+        "z": "896be21a748ac97b",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 910,
+        "y": 460,
+        "wires": []
+    },
+    {
+        "id": "d7d10fe46aa553de",
+        "type": "function",
+        "z": "896be21a748ac97b",
+        "name": "function 68",
+        "func": "const currentTime = new Date();\n\nglobal.set(\"mqtt-broker\", currentTime);\n\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 730,
+        "y": 580,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "a7f63ec082d44098",
+        "type": "function",
+        "z": "896be21a748ac97b",
+        "name": "function 69",
+        "func": "// @ts-nocheck\nvar system = 'mqtt-broker';\nvar currentTime = new Date();\n\n\nvar brokerUpdateTime = global.get(system);\nvar difference = currentTime - brokerUpdateTime;\n\nif (difference>15000){\n    global.set(\"brokerfailed1\", true)\n    if (global.get(\"active\")) {\n        var active2 = global.get(\"active\")\n        active2[system] = false\n        global.set(\"active\", active2);\n\n    } else {\n        var active = {};\n        active[system] = false\n        global.set(\"active\", active);\n    }\n} else {\n    if (global.get(\"active\")) {\n        var active2 = global.get(\"active\")\n        active2[system] = true\n        global.set(\"active\", active2);\n\n    } else {\n        var active = {};\n        active[system] = true\n        global.set(\"active\", active);\n    }\n}\n\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 690,
+        "y": 680,
+        "wires": [
+            [
+                "0cca4ea8720cea06"
+            ]
+        ]
+    },
+    {
+        "id": "15b7fd5566a3f414",
+        "type": "inject",
+        "z": "896be21a748ac97b",
+        "name": "",
+        "props": [],
+        "repeat": "3",
+        "crontab": "",
+        "once": false,
+        "onceDelay": "8",
+        "topic": "",
+        "x": 450,
+        "y": 680,
+        "wires": [
+            [
+                "a7f63ec082d44098",
+                "081b6b969cc0bfa5"
+            ]
+        ]
+    },
+    {
+        "id": "0cca4ea8720cea06",
+        "type": "switch",
+        "z": "896be21a748ac97b",
+        "name": "",
+        "property": "brokerfailed1",
+        "propertyType": "global",
+        "rules": [
+            {
+                "t": "true"
+            },
+            {
+                "t": "else"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 910,
+        "y": 660,
+        "wires": [
+            [
+                "f2f5e314f0818056",
+                "caaa7b8cebefda62"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "f2f5e314f0818056",
+        "type": "switch",
+        "z": "896be21a748ac97b",
+        "name": "",
+        "property": "active[\"mqtt-broker\"]",
+        "propertyType": "global",
+        "rules": [
+            {
+                "t": "true"
+            },
+            {
+                "t": "false"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 1030,
+        "y": 580,
+        "wires": [
+            [
+                "694cfc470a5fc646"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "89adb34b82f91242",
+        "type": "http request",
+        "z": "896be21a748ac97b",
+        "name": "",
+        "method": "use",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [
+            {
+                "keyType": "other",
+                "keyValue": "X-API-Key",
+                "valueType": "other",
+                "valueValue": "ptr_wS2bf7SA1eQi2i80dpdSLt4haT7qehfRxKhntV8uqQk="
+            }
+        ],
+        "x": 1890,
+        "y": 800,
+        "wires": [
+            [
+                "dde0c153c3ce04d5"
+            ]
+        ]
+    },
+    {
+        "id": "081b6b969cc0bfa5",
+        "type": "http request",
+        "z": "896be21a748ac97b",
+        "name": "",
+        "method": "GET",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "http://192.168.178.75:15672/api/connections",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "basic",
+        "senderr": false,
+        "headers": [],
+        "x": 530,
+        "y": 760,
+        "wires": [
+            [
+                "f8925ed3889b82f1"
+            ]
+        ]
+    },
+    {
+        "id": "f8925ed3889b82f1",
+        "type": "function",
+        "z": "896be21a748ac97b",
+        "name": "function 70",
+        "func": "\nvar system = \"rabbitmq\"\nif (msg.statusCode == 200) {\n    if (global.get(\"active\")) {\n        var active2 = global.get(\"active\")\n        active2[system] = true\n        global.set(\"active\", active2);\n\n    } else {\n        var active = {};\n        active[system] = true\n        global.set(\"active\", active);\n    }\n} else {\n    global.set(\"brokerfailed2\", true)\n    if (global.get(\"active\")) {\n        var active2 = global.get(\"active\")\n        active2[system] = false\n        global.set(\"active\", active2);\n\n    } else {\n        var active = {};\n        active[system] = false\n        global.set(\"active\", active);\n    }\n}\n\n\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 690,
+        "y": 760,
+        "wires": [
+            [
+                "605fe5de25926ead"
+            ]
+        ]
+    },
+    {
+        "id": "de9569bfa5691fc6",
+        "type": "inject",
+        "z": "896be21a748ac97b",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 1000,
+        "y": 700,
+        "wires": [
+            [
+                "ea0f0febc3d49018"
+            ]
+        ]
+    },
+    {
+        "id": "2348cbb413b1b7de",
+        "type": "debug",
+        "z": "896be21a748ac97b",
+        "name": "debug 24",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "statusCode",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1920,
+        "y": 980,
+        "wires": []
+    },
+    {
+        "id": "ea0f0febc3d49018",
+        "type": "function",
+        "z": "896be21a748ac97b",
+        "name": "Restart node red via Portainer (Buffet)",
+        "func": "msg.url = \"https://192.168.178.75:9443/api/endpoints/2/docker/containers/1d9949fdad810f5258bf0c0a6330d95bc9bf83794e06f0a2813c928f4e063378/restart\";\nmsg.method = \"POST\";\nmsg.rejectUnauthorized = false;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1550,
+        "y": 760,
+        "wires": [
+            [
+                "89adb34b82f91242"
+            ]
+        ]
+    },
+    {
+        "id": "694cfc470a5fc646",
+        "type": "function",
+        "z": "896be21a748ac97b",
+        "name": "function 71",
+        "func": "global.set(\"brokerfailed1\", false)\nnode.warn(\"MQTT-Broker ist wieder aktiv.\")\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1230,
+        "y": 640,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "caaa7b8cebefda62",
+        "type": "debug",
+        "z": "896be21a748ac97b",
+        "name": "debug 25",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1220,
+        "y": 540,
+        "wires": []
+    },
+    {
+        "id": "dde0c153c3ce04d5",
+        "type": "function",
+        "z": "896be21a748ac97b",
+        "name": "function 72",
+        "func": "\nglobal.set(\"brokerfailed2\", false)\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1910,
+        "y": 880,
+        "wires": [
+            [
+                "2348cbb413b1b7de"
+            ]
+        ]
+    },
+    {
+        "id": "7cbdd66754c2f9fc",
+        "type": "switch",
+        "z": "896be21a748ac97b",
+        "name": "",
+        "property": "active[\"rabbitmq\"]",
+        "propertyType": "global",
+        "rules": [
+            {
+                "t": "true"
+            },
+            {
+                "t": "false"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 1070,
+        "y": 820,
+        "wires": [
+            [
+                "c0ee3a7b88f3d7d4"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "605fe5de25926ead",
+        "type": "switch",
+        "z": "896be21a748ac97b",
+        "name": "",
+        "property": "brokerfailed2",
+        "propertyType": "global",
+        "rules": [
+            {
+                "t": "true"
+            },
+            {
+                "t": "else"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 890,
+        "y": 780,
+        "wires": [
+            [
+                "7cbdd66754c2f9fc"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "c0ee3a7b88f3d7d4",
+        "type": "function",
+        "z": "896be21a748ac97b",
+        "name": "function 73",
+        "func": "node.warn(\"RabbitMQ musste neu gestartet werden. Neustart der Komponenten zum erneuten Verbindungsaufbau wird ausgeführt..\")\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1250,
+        "y": 840,
+        "wires": [
+            [
+                "ea0f0febc3d49018",
+                "4e3cd309f049d8ab",
+                "85edcf4942973ab9",
+                "cc7c0fdb21e07c02"
+            ]
+        ]
+    },
+    {
+        "id": "57d43df40d36bf64",
+        "type": "switch",
+        "z": "896be21a748ac97b",
+        "name": "",
+        "property": "topic",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "cont",
+                "v": "veranstaltung",
+                "vt": "str"
+            },
+            {
+                "t": "else"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 550,
+        "y": 240,
+        "wires": [
+            [
+                "3de8b8a8c7cd7925"
+            ],
+            [
+                "48097847f20859c1"
+            ]
+        ]
+    },
+    {
+        "id": "3de8b8a8c7cd7925",
+        "type": "function",
+        "z": "896be21a748ac97b",
+        "name": "function 74",
+        "func": "\nvar system = msg.topic.slice(6)\nvar name = msg.topic.slice(msg.topic.indexOf(\"/\", 24)+1, msg.topic.indexOf(\"/buffet\"))\n\n\nif (global.get(name)){\n    var veranstaltung2 = global.get(name)\n    veranstaltung2[system] = false\n    global.set(name, veranstaltung2);\n\n} else {\n    var veranstaltung = {};\n    veranstaltung[system] = false\n    global.set(name, veranstaltung);\n}\n\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 762.8958129882812,
+        "y": 189.88888549804688,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "e71958da5fbdaebb",
+        "type": "http in",
+        "z": "896be21a748ac97b",
+        "name": "",
+        "url": "/waechter/:veranstaltung",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 500,
+        "y": 520,
+        "wires": [
+            [
+                "26a8b5f4d154e7c8"
+            ]
+        ]
+    },
+    {
+        "id": "26a8b5f4d154e7c8",
+        "type": "function",
+        "z": "896be21a748ac97b",
+        "name": "function 75",
+        "func": "\n\nvar core = global.get(\"active\");\nlet vertrauenswuerdigCheck = true;\nfor (let key in core) {\n    if (core[key] === false) {\n        vertrauenswuerdigCheck = false;\n        break;\n    }\n}\n\nvar edge = global.get(msg.req.params.veranstaltung);\nfor (let key in edge) {\n    if (edge[key] === false) {\n        vertrauenswuerdigCheck = false;\n        break;\n    }\n}\n\n\n\nmsg.payload = {\n    vertrauenswuerdig: vertrauenswuerdigCheck,\n    core,\n    edge\n}\nreturn msg;\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 730,
+        "y": 520,
+        "wires": [
+            [
+                "1a49c1ec0aa894e4"
+            ]
+        ]
+    },
+    {
+        "id": "4e3cd309f049d8ab",
+        "type": "function",
+        "z": "896be21a748ac97b",
+        "name": "Restart node red via Portainer (Konfig)",
+        "func": "msg.url = \"https://192.168.178.75:9443/api/endpoints/2/docker/containers/0e85590e32b737d7496e9b66e716869fef6c869840acc629c63f560916c4467d/restart\";\nmsg.method = \"POST\";\nmsg.rejectUnauthorized = false;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1550,
+        "y": 720,
+        "wires": [
+            [
+                "89adb34b82f91242"
+            ]
+        ]
+    },
+    {
+        "id": "85edcf4942973ab9",
+        "type": "function",
+        "z": "896be21a748ac97b",
+        "name": "Restart node red via Portainer (Produktion)",
+        "func": "msg.url = \"https://192.168.178.75:9443/api/endpoints/2/docker/containers/92f72b5a5baab457f0a29b65aed3cb63f3fca38baaab0313b52549397f7c623e/restart\";\nmsg.method = \"POST\";\nmsg.rejectUnauthorized = false;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1570,
+        "y": 680,
+        "wires": [
+            [
+                "89adb34b82f91242"
+            ]
+        ]
+    },
+    {
+        "id": "cc7c0fdb21e07c02",
+        "type": "function",
+        "z": "896be21a748ac97b",
+        "name": "Restart node red via Portainer (Ueberwachung)",
+        "func": "msg.url = \"https://192.168.178.75:9443/api/endpoints/2/docker/containers/b858ed4a7d22f6797206a0fe256746beccc46f02d7cc0587ac69a8f42bdfedbb/restart\";\nmsg.method = \"POST\";\nmsg.rejectUnauthorized = false;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1580,
+        "y": 640,
+        "wires": [
+            [
+                "89adb34b82f91242"
+            ]
+        ]
+    },
+    {
+        "id": "74ad56f2bfa2e69f",
+        "type": "mqtt-broker",
+        "name": "Wächter Broker",
+        "broker": "192.168.178.75",
+        "port": "1883",
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": "4",
+        "keepalive": "60",
+        "cleansession": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    }
+]

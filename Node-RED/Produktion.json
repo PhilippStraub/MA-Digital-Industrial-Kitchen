@@ -1,0 +1,200 @@
+[
+    {
+        "id": "2ed27ade2c82c95e",
+        "type": "tab",
+        "label": "Produktion",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "d398ee6c234713e5",
+        "type": "amqp-in",
+        "z": "2ed27ade2c82c95e",
+        "name": "",
+        "broker": "e07f836c7f7b9940",
+        "prefetch": 0,
+        "noAck": true,
+        "exchangeName": "Produktion",
+        "exchangeType": "direct",
+        "exchangeRoutingKey": "Produktion",
+        "exchangeDurable": true,
+        "queueName": "",
+        "queueExclusive": true,
+        "queueDurable": false,
+        "queueAutoDelete": true,
+        "headers": "{}",
+        "x": 560,
+        "y": 400,
+        "wires": [
+            [
+                "821003a79223f8bf"
+            ]
+        ]
+    },
+    {
+        "id": "cdc6f6db6e7f27f7",
+        "type": "debug",
+        "z": "2ed27ade2c82c95e",
+        "name": "debug 7",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1020,
+        "y": 240,
+        "wires": []
+    },
+    {
+        "id": "821003a79223f8bf",
+        "type": "function",
+        "z": "2ed27ade2c82c95e",
+        "name": "function 16",
+        "func": "msg.topic = msg.payload.topic + \"/production\";\n\nconst currentTime = new Date().toLocaleTimeString();\nconst now = new Date();\nconst day = String(now.getDate()).padStart(2, '0');\nconst month = String(now.getMonth() + 1).padStart(2, '0');\nconst year = String(now.getFullYear());\n\nconst currentDate = `${day}.${month}.${year}`;\nmsg.payload.timeUpdated = currentTime;\nmsg.payload.timeDate = currentDate;\nmsg.payload.status = \"in Bearbeitung\";\n\ndelete msg.payload.production;\ndelete msg.payload.topic;\n\n\n\n\n\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 810,
+        "y": 400,
+        "wires": [
+            [
+                "30890571b2b34eef",
+                "785fe3310faf593d",
+                "cdc6f6db6e7f27f7"
+            ]
+        ]
+    },
+    {
+        "id": "30890571b2b34eef",
+        "type": "mqtt out",
+        "z": "2ed27ade2c82c95e",
+        "name": "",
+        "topic": "",
+        "qos": "",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "23fee40ac0194212",
+        "x": 1310,
+        "y": 500,
+        "wires": []
+    },
+    {
+        "id": "785fe3310faf593d",
+        "type": "delay",
+        "z": "2ed27ade2c82c95e",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "3",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "allowrate": false,
+        "outputs": 1,
+        "x": 1040,
+        "y": 400,
+        "wires": [
+            [
+                "db5187b288ede1c3"
+            ]
+        ]
+    },
+    {
+        "id": "db5187b288ede1c3",
+        "type": "function",
+        "z": "2ed27ade2c82c95e",
+        "name": "function 17",
+        "func": "\n\nconst currentTime = new Date().toLocaleTimeString();\nconst now = new Date();\nconst day = String(now.getDate()).padStart(2, '0');\nconst month = String(now.getMonth() + 1).padStart(2, '0');\nconst year = String(now.getFullYear());\n\nconst currentDate = `${day}.${month}.${year}`;\nmsg.payload.timeUpdated = currentTime;\nmsg.payload.timeDate = currentDate;\nmsg.payload.status = \"Fertiggestellt, in Lieferung\";\n\n\n\n\n\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1210,
+        "y": 400,
+        "wires": [
+            [
+                "30890571b2b34eef"
+            ]
+        ]
+    },
+    {
+        "id": "a37ac25d4c36fdcf",
+        "type": "inject",
+        "z": "2ed27ade2c82c95e",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": "2",
+        "topic": "active/produktion",
+        "payload": "Aktiv",
+        "payloadType": "str",
+        "x": 780,
+        "y": 500,
+        "wires": [
+            [
+                "30890571b2b34eef"
+            ]
+        ]
+    },
+    {
+        "id": "e07f836c7f7b9940",
+        "type": "amqp-broker",
+        "name": "rabbitmq",
+        "host": "192.168.178.75",
+        "port": "5672",
+        "vhost": "",
+        "tls": false,
+        "credsFromSettings": false
+    },
+    {
+        "id": "23fee40ac0194212",
+        "type": "mqtt-broker",
+        "name": "Produktion Broker",
+        "broker": "192.168.178.75",
+        "port": "1883",
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": "4",
+        "keepalive": "60",
+        "cleansession": true,
+        "birthTopic": "error/produktion",
+        "birthQos": "0",
+        "birthPayload": "Verbindung zum Broker verloren",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    }
+]

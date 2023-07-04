@@ -1,0 +1,882 @@
+[
+    {
+        "id": "d36dc3460322383a",
+        "type": "tab",
+        "label": "Buffet",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "f940e8f6b3ddc495",
+        "type": "amqp-in",
+        "z": "d36dc3460322383a",
+        "name": "",
+        "broker": "e07f836c7f7b9940",
+        "prefetch": 0,
+        "noAck": true,
+        "exchangeName": "Buffet",
+        "exchangeType": "direct",
+        "exchangeRoutingKey": "Buffet",
+        "exchangeDurable": true,
+        "queueName": "",
+        "queueExclusive": true,
+        "queueDurable": false,
+        "queueAutoDelete": true,
+        "headers": "{}",
+        "x": 130,
+        "y": 220,
+        "wires": [
+            [
+                "250824dd1e9f73a8",
+                "b325e04e4ee627fa"
+            ]
+        ]
+    },
+    {
+        "id": "250824dd1e9f73a8",
+        "type": "debug",
+        "z": "d36dc3460322383a",
+        "name": "debug 11",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1040,
+        "y": 180,
+        "wires": []
+    },
+    {
+        "id": "da8229bc5b944bce",
+        "type": "postgresql",
+        "z": "d36dc3460322383a",
+        "name": "Prüfe ob Tabelle buffet vorhanden",
+        "query": "SELECT EXISTS (SELECT FROM information_schema.tables WHERE table_name = 'buffet')",
+        "postgreSQLConfig": "de8efd55fbc380cc",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 600,
+        "y": 260,
+        "wires": [
+            [
+                "5930dc37a19518db"
+            ]
+        ]
+    },
+    {
+        "id": "b325e04e4ee627fa",
+        "type": "function",
+        "z": "d36dc3460322383a",
+        "name": "function 21",
+        "func": "msg.payload['quersummeid'] = msg.payload[\"buffetId\"] + msg.payload[\"chafingDishId\"];\nmsg.buffer = msg.payload\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 330,
+        "y": 260,
+        "wires": [
+            [
+                "da8229bc5b944bce"
+            ]
+        ]
+    },
+    {
+        "id": "5930dc37a19518db",
+        "type": "switch",
+        "z": "d36dc3460322383a",
+        "name": "",
+        "property": "payload[0].exists",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "false"
+            },
+            {
+                "t": "true"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 310,
+        "y": 340,
+        "wires": [
+            [
+                "ef4bde17893979c8"
+            ],
+            [
+                "d690a43b40eb412e"
+            ]
+        ]
+    },
+    {
+        "id": "7d31aa8026a9cffc",
+        "type": "inject",
+        "z": "d36dc3460322383a",
+        "name": "",
+        "props": [],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "x": 70,
+        "y": 160,
+        "wires": [
+            [
+                "4db09cd398c413a7"
+            ]
+        ]
+    },
+    {
+        "id": "4db09cd398c413a7",
+        "type": "function",
+        "z": "d36dc3460322383a",
+        "name": "function 22",
+        "func": "msg.payload = {\n    payload: \"Ueberwachung Edge wurde einem Buffet & Chafing zugewiesen.\",\n    uuid: \"a8:6d:aa:61:14:ca\",\n    buffetId: \"1\",\n    buffetName: \"Primaeres Buffet\",\n    chafingDishId: \"1\"\n}\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 210,
+        "y": 140,
+        "wires": [
+            [
+                "b325e04e4ee627fa"
+            ]
+        ]
+    },
+    {
+        "id": "ef4bde17893979c8",
+        "type": "postgresql",
+        "z": "d36dc3460322383a",
+        "name": "Erstelle Tabelle",
+        "query": "CREATE TABLE buffet (uuid TEXT PRIMARY KEY, buffetid TEXT, buffetname TEXT, chafingdishid TEXT, quersummeid TEXT)",
+        "postgreSQLConfig": "de8efd55fbc380cc",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 540,
+        "y": 320,
+        "wires": [
+            [
+                "c2d58a620cccd9a6",
+                "296f8f2facfdf2c6"
+            ]
+        ]
+    },
+    {
+        "id": "c2d58a620cccd9a6",
+        "type": "function",
+        "z": "d36dc3460322383a",
+        "name": "function 24",
+        "func": "node.warn(\"Tabelle Buffet erstellt\");",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 750,
+        "y": 320,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "5bd33b174b7713b1",
+        "type": "postgresql",
+        "z": "d36dc3460322383a",
+        "name": "DROP TAble",
+        "query": "DROP TABLE buffet",
+        "postgreSQLConfig": "de8efd55fbc380cc",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 110,
+        "y": 440,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "079af4673150d3c6",
+        "type": "inject",
+        "z": "d36dc3460322383a",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 100,
+        "y": 360,
+        "wires": [
+            [
+                "5bd33b174b7713b1"
+            ]
+        ]
+    },
+    {
+        "id": "49f062867e21cc46",
+        "type": "postgresql",
+        "z": "d36dc3460322383a",
+        "name": "Prüfung Nr. 1 UUID Edge Device",
+        "query": "\nSELECT EXISTS (SELECT FROM buffet WHERE uuid = '{{msg.buffer.uuid}}')\n",
+        "postgreSQLConfig": "de8efd55fbc380cc",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 420,
+        "y": 560,
+        "wires": [
+            [
+                "250824dd1e9f73a8",
+                "15b88d5e44f34033"
+            ]
+        ]
+    },
+    {
+        "id": "d690a43b40eb412e",
+        "type": "postgresql",
+        "z": "d36dc3460322383a",
+        "name": "Prüfung Nr. 2 Buffet + Chafingdish als Quersumme",
+        "query": "\nSELECT EXISTS (SELECT FROM buffet WHERE quersummeid = '{{msg.buffer.quersummeid}}')\n",
+        "postgreSQLConfig": "de8efd55fbc380cc",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 450,
+        "y": 420,
+        "wires": [
+            [
+                "31436964fc8254ca"
+            ]
+        ]
+    },
+    {
+        "id": "5124915917b9dad6",
+        "type": "postgresql",
+        "z": "d36dc3460322383a",
+        "name": "Wenn UUID da",
+        "query": "UPDATE buffet SET buffetid = '{{msg.buffer.buffetId}}', \nbuffetname = '{{msg.buffer.buffetName}}', \nchafingdishid = '{{msg.buffer.chafingDishId}}',\nquersummeid = '{{msg.buffer.quersummeid}}'\nWHERE uuid = '{{msg.buffer.uuid}}'\n",
+        "postgreSQLConfig": "de8efd55fbc380cc",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 820,
+        "y": 580,
+        "wires": [
+            [
+                "4195c506fd2feec9"
+            ]
+        ]
+    },
+    {
+        "id": "296f8f2facfdf2c6",
+        "type": "postgresql",
+        "z": "d36dc3460322383a",
+        "name": "Wenn UUID nicht da",
+        "query": "INSERT INTO buffet (uuid, buffetid, buffetname, chafingdishid, quersummeid) \nVALUES ('{{msg.buffer.uuid}}', '{{msg.buffer.buffetId}}', '{{msg.buffer.buffetName}}', '{{msg.buffer.chafingDishId}}', '{{msg.buffer.quersummeid}}')\n\n",
+        "postgreSQLConfig": "de8efd55fbc380cc",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 840,
+        "y": 520,
+        "wires": [
+            [
+                "4195c506fd2feec9"
+            ]
+        ]
+    },
+    {
+        "id": "15b88d5e44f34033",
+        "type": "switch",
+        "z": "d36dc3460322383a",
+        "name": "",
+        "property": "payload[0].exists",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "false"
+            },
+            {
+                "t": "true"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 650,
+        "y": 560,
+        "wires": [
+            [
+                "296f8f2facfdf2c6"
+            ],
+            [
+                "5124915917b9dad6"
+            ]
+        ]
+    },
+    {
+        "id": "4195c506fd2feec9",
+        "type": "debug",
+        "z": "d36dc3460322383a",
+        "name": "debug 12",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1260,
+        "y": 420,
+        "wires": []
+    },
+    {
+        "id": "31436964fc8254ca",
+        "type": "switch",
+        "z": "d36dc3460322383a",
+        "name": "",
+        "property": "payload[0].exists",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "false"
+            },
+            {
+                "t": "true"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 730,
+        "y": 420,
+        "wires": [
+            [
+                "49f062867e21cc46"
+            ],
+            [
+                "1d6956fc38e4e637"
+            ]
+        ]
+    },
+    {
+        "id": "1d6956fc38e4e637",
+        "type": "postgresql",
+        "z": "d36dc3460322383a",
+        "name": "Entferne alte Zuweisung des Chafing",
+        "query": "DELETE FROM buffet WHERE quersummeid = '{{msg.buffer.quersummeid}}'",
+        "postgreSQLConfig": "de8efd55fbc380cc",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 430,
+        "y": 480,
+        "wires": [
+            [
+                "49f062867e21cc46"
+            ]
+        ]
+    },
+    {
+        "id": "20c2391b941acca2",
+        "type": "postgresql",
+        "z": "d36dc3460322383a",
+        "name": "Erstelle Template-Tabelle",
+        "query": "CREATE TABLE buffet_template (id TEXT PRIMARY KEY, templateid TEXT, chafingdishid TEXT, gericht TEXT)",
+        "postgreSQLConfig": "de8efd55fbc380cc",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 950,
+        "y": 980,
+        "wires": [
+            [
+                "b5693a9e84952758"
+            ]
+        ]
+    },
+    {
+        "id": "addfe59b12e244c6",
+        "type": "comment",
+        "z": "d36dc3460322383a",
+        "name": "Konfiguration Tabelle fügt Tempalte und Buffet zusammen",
+        "info": "",
+        "x": 530,
+        "y": 1500,
+        "wires": []
+    },
+    {
+        "id": "33d4b56afc7906aa",
+        "type": "http in",
+        "z": "d36dc3460322383a",
+        "name": "",
+        "url": "/buffet/template",
+        "method": "post",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 140,
+        "y": 980,
+        "wires": [
+            [
+                "e057b4eba1858f9d"
+            ]
+        ]
+    },
+    {
+        "id": "b85c0395916a939a",
+        "type": "http in",
+        "z": "d36dc3460322383a",
+        "name": "",
+        "url": "/buffet/template/:template",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 180,
+        "y": 1160,
+        "wires": [
+            [
+                "b86f31256731d044"
+            ]
+        ]
+    },
+    {
+        "id": "f367b5d9e4ec2a2b",
+        "type": "postgresql",
+        "z": "d36dc3460322383a",
+        "name": "Prüfe ob Tabelle template vorhanden",
+        "query": "SELECT EXISTS (SELECT FROM information_schema.tables WHERE table_name = 'buffet_template')",
+        "postgreSQLConfig": "de8efd55fbc380cc",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 430,
+        "y": 980,
+        "wires": [
+            [
+                "bebec982a4cc63f9"
+            ]
+        ]
+    },
+    {
+        "id": "bebec982a4cc63f9",
+        "type": "switch",
+        "z": "d36dc3460322383a",
+        "name": "",
+        "property": "payload[0].exists",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "false"
+            },
+            {
+                "t": "true"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 670,
+        "y": 980,
+        "wires": [
+            [
+                "20c2391b941acca2"
+            ],
+            [
+                "32a9a5b622b2920b"
+            ]
+        ]
+    },
+    {
+        "id": "32a9a5b622b2920b",
+        "type": "postgresql",
+        "z": "d36dc3460322383a",
+        "name": "Prüfung Template ID",
+        "query": "\nSELECT EXISTS (SELECT FROM buffet_template WHERE templateid = '{{msg.buffer.templateID}}')\n",
+        "postgreSQLConfig": "de8efd55fbc380cc",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 411,
+        "y": 1055,
+        "wires": [
+            [
+                "c131cc83c0fa63fc"
+            ]
+        ]
+    },
+    {
+        "id": "c131cc83c0fa63fc",
+        "type": "switch",
+        "z": "d36dc3460322383a",
+        "name": "",
+        "property": "payload[0].exists",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "false"
+            },
+            {
+                "t": "true"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 630,
+        "y": 1060,
+        "wires": [
+            [
+                "b5693a9e84952758"
+            ],
+            [
+                "efcb1341a533d686"
+            ]
+        ]
+    },
+    {
+        "id": "b5693a9e84952758",
+        "type": "postgresql",
+        "z": "d36dc3460322383a",
+        "name": "Wenn ID nicht da",
+        "query": "INSERT INTO buffet_template (id, templateid, chafingdishid, gericht) VALUES ('{{msg.buffer.template.1.id}}', '{{msg.buffer.templateID}}', '{{msg.buffer.template.1.chafingdishid}}', '{{msg.buffer.template.1.gericht}}');\nINSERT INTO buffet_template (id, templateid, chafingdishid, gericht) VALUES ('{{msg.buffer.template.2.id}}', '{{msg.buffer.templateID}}', '{{msg.buffer.template.2.chafingdishid}}', '{{msg.buffer.template.2.gericht}}');\nINSERT INTO buffet_template (id, templateid, chafingdishid, gericht) VALUES ('{{msg.buffer.template.3.id}}', '{{msg.buffer.templateID}}', '{{msg.buffer.template.3.chafingdishid}}', '{{msg.buffer.template.3.gericht}}');\nINSERT INTO buffet_template (id, templateid, chafingdishid, gericht) VALUES ('{{msg.buffer.template.4.id}}', '{{msg.buffer.templateID}}', '{{msg.buffer.template.4.chafingdishid}}', '{{msg.buffer.template.4.gericht}}');\nINSERT INTO buffet_template (id, templateid, chafingdishid, gericht) VALUES ('{{msg.buffer.template.5.id}}', '{{msg.buffer.templateID}}', '{{msg.buffer.template.5.chafingdishid}}', '{{msg.buffer.template.5.gericht}}');\nINSERT INTO buffet_template (id, templateid, chafingdishid, gericht) VALUES ('{{msg.buffer.template.6.id}}', '{{msg.buffer.templateID}}', '{{msg.buffer.template.6.chafingdishid}}', '{{msg.buffer.template.6.gericht}}');\nINSERT INTO buffet_template (id, templateid, chafingdishid, gericht) VALUES ('{{msg.buffer.template.7.id}}', '{{msg.buffer.templateID}}', '{{msg.buffer.template.7.chafingdishid}}', '{{msg.buffer.template.7.gericht}}');\nINSERT INTO buffet_template (id, templateid, chafingdishid, gericht) VALUES ('{{msg.buffer.template.8.id}}', '{{msg.buffer.templateID}}', '{{msg.buffer.template.8.chafingdishid}}', '{{msg.buffer.template.8.gericht}}');\nINSERT INTO buffet_template (id, templateid, chafingdishid, gericht) VALUES ('{{msg.buffer.template.9.id}}', '{{msg.buffer.templateID}}', '{{msg.buffer.template.9.chafingdishid}}', '{{msg.buffer.template.9.gericht}}');",
+        "postgreSQLConfig": "de8efd55fbc380cc",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 1010,
+        "y": 1060,
+        "wires": [
+            [
+                "2c71437ae4703d12"
+            ]
+        ]
+    },
+    {
+        "id": "efcb1341a533d686",
+        "type": "postgresql",
+        "z": "d36dc3460322383a",
+        "name": "Wenn ID da",
+        "query": "DELETE FROM buffet_template WHERE templateid = '{{msg.buffer.templateID}}';\nINSERT INTO buffet_template (id, templateid, chafingdishid, gericht) VALUES ('{{msg.buffer.template.1.id}}', '{{msg.buffer.templateID}}', '{{msg.buffer.template.1.chafingdishid}}', '{{msg.buffer.template.1.gericht}}');\nINSERT INTO buffet_template (id, templateid, chafingdishid, gericht) VALUES ('{{msg.buffer.template.2.id}}', '{{msg.buffer.templateID}}', '{{msg.buffer.template.2.chafingdishid}}', '{{msg.buffer.template.2.gericht}}');\nINSERT INTO buffet_template (id, templateid, chafingdishid, gericht) VALUES ('{{msg.buffer.template.3.id}}', '{{msg.buffer.templateID}}', '{{msg.buffer.template.3.chafingdishid}}', '{{msg.buffer.template.3.gericht}}');\nINSERT INTO buffet_template (id, templateid, chafingdishid, gericht) VALUES ('{{msg.buffer.template.4.id}}', '{{msg.buffer.templateID}}', '{{msg.buffer.template.4.chafingdishid}}', '{{msg.buffer.template.4.gericht}}');\nINSERT INTO buffet_template (id, templateid, chafingdishid, gericht) VALUES ('{{msg.buffer.template.5.id}}', '{{msg.buffer.templateID}}', '{{msg.buffer.template.5.chafingdishid}}', '{{msg.buffer.template.5.gericht}}');\nINSERT INTO buffet_template (id, templateid, chafingdishid, gericht) VALUES ('{{msg.buffer.template.6.id}}', '{{msg.buffer.templateID}}', '{{msg.buffer.template.6.chafingdishid}}', '{{msg.buffer.template.6.gericht}}');\nINSERT INTO buffet_template (id, templateid, chafingdishid, gericht) VALUES ('{{msg.buffer.template.7.id}}', '{{msg.buffer.templateID}}', '{{msg.buffer.template.7.chafingdishid}}', '{{msg.buffer.template.7.gericht}}');\nINSERT INTO buffet_template (id, templateid, chafingdishid, gericht) VALUES ('{{msg.buffer.template.8.id}}', '{{msg.buffer.templateID}}', '{{msg.buffer.template.8.chafingdishid}}', '{{msg.buffer.template.8.gericht}}');\nINSERT INTO buffet_template (id, templateid, chafingdishid, gericht) VALUES ('{{msg.buffer.template.9.id}}', '{{msg.buffer.templateID}}', '{{msg.buffer.template.9.chafingdishid}}', '{{msg.buffer.template.9.gericht}}');",
+        "postgreSQLConfig": "de8efd55fbc380cc",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 910,
+        "y": 1140,
+        "wires": [
+            [
+                "2c71437ae4703d12"
+            ]
+        ]
+    },
+    {
+        "id": "2c71437ae4703d12",
+        "type": "http response",
+        "z": "d36dc3460322383a",
+        "name": "",
+        "statusCode": "200",
+        "headers": {},
+        "x": 1180,
+        "y": 1100,
+        "wires": []
+    },
+    {
+        "id": "e057b4eba1858f9d",
+        "type": "function",
+        "z": "d36dc3460322383a",
+        "name": "function 27",
+        "func": "for (var i = 1; i <= 9; i++){\n    msg.payload.template[i].id = msg.payload.templateID + msg.payload.template[i].chafingdishid;\n}\nmsg.buffer = msg.payload;\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 230,
+        "y": 900,
+        "wires": [
+            [
+                "f367b5d9e4ec2a2b",
+                "757178dbe56e4b0f"
+            ]
+        ]
+    },
+    {
+        "id": "757178dbe56e4b0f",
+        "type": "debug",
+        "z": "d36dc3460322383a",
+        "name": "debug 14",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 460,
+        "y": 920,
+        "wires": []
+    },
+    {
+        "id": "b86f31256731d044",
+        "type": "postgresql",
+        "z": "d36dc3460322383a",
+        "name": "",
+        "query": "SELECT * FROM buffet_template WHERE templateid = '{{msg.req.params.template}}';",
+        "postgreSQLConfig": "de8efd55fbc380cc",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 410,
+        "y": 1160,
+        "wires": [
+            [
+                "e53f38dd450d7f40",
+                "0c51513458a32773"
+            ]
+        ]
+    },
+    {
+        "id": "a6574863bf608278",
+        "type": "http response",
+        "z": "d36dc3460322383a",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 750,
+        "y": 1180,
+        "wires": []
+    },
+    {
+        "id": "e53f38dd450d7f40",
+        "type": "json",
+        "z": "d36dc3460322383a",
+        "name": "",
+        "property": "payload",
+        "action": "",
+        "pretty": false,
+        "x": 610,
+        "y": 1180,
+        "wires": [
+            [
+                "a6574863bf608278"
+            ]
+        ]
+    },
+    {
+        "id": "2132a69c3e86a8c7",
+        "type": "http in",
+        "z": "d36dc3460322383a",
+        "name": "",
+        "url": "/buffet",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 120,
+        "y": 680,
+        "wires": [
+            [
+                "ace11ced687e29cb"
+            ]
+        ]
+    },
+    {
+        "id": "e9b9c1c5a685fbd0",
+        "type": "http in",
+        "z": "d36dc3460322383a",
+        "name": "",
+        "url": "/buffet/:buffet",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 157.8958282470703,
+        "y": 728.7777709960938,
+        "wires": [
+            [
+                "3db882cd65928924"
+            ]
+        ]
+    },
+    {
+        "id": "3db882cd65928924",
+        "type": "postgresql",
+        "z": "d36dc3460322383a",
+        "name": "",
+        "query": "SELECT * FROM buffet WHERE buffetid = '{{msg.req.params.buffet}}';",
+        "postgreSQLConfig": "de8efd55fbc380cc",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 390,
+        "y": 740,
+        "wires": [
+            [
+                "3810d120c527e2e0"
+            ]
+        ]
+    },
+    {
+        "id": "3810d120c527e2e0",
+        "type": "json",
+        "z": "d36dc3460322383a",
+        "name": "",
+        "property": "payload",
+        "action": "",
+        "pretty": false,
+        "x": 570,
+        "y": 680,
+        "wires": [
+            [
+                "ebaa7302d7628d04"
+            ]
+        ]
+    },
+    {
+        "id": "ebaa7302d7628d04",
+        "type": "http response",
+        "z": "d36dc3460322383a",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 730,
+        "y": 700,
+        "wires": []
+    },
+    {
+        "id": "ace11ced687e29cb",
+        "type": "postgresql",
+        "z": "d36dc3460322383a",
+        "name": "",
+        "query": "SELECT DISTINCT buffetid, buffetname FROM buffet;",
+        "postgreSQLConfig": "de8efd55fbc380cc",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 370,
+        "y": 680,
+        "wires": [
+            [
+                "3810d120c527e2e0"
+            ]
+        ]
+    },
+    {
+        "id": "a0cbb8daec4fb73e",
+        "type": "http in",
+        "z": "d36dc3460322383a",
+        "name": "",
+        "url": "/buffet/templates",
+        "method": "post",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 160,
+        "y": 1260,
+        "wires": [
+            [
+                "11d48fbc2aa91da1"
+            ]
+        ]
+    },
+    {
+        "id": "11d48fbc2aa91da1",
+        "type": "postgresql",
+        "z": "d36dc3460322383a",
+        "name": "",
+        "query": "SELECT DISTINCT templateid FROM buffet_template;",
+        "postgreSQLConfig": "de8efd55fbc380cc",
+        "split": false,
+        "rowsPerMsg": "1",
+        "outputs": 1,
+        "x": 456.89581298828125,
+        "y": 1255.6666259765625,
+        "wires": [
+            [
+                "e53f38dd450d7f40",
+                "0c51513458a32773"
+            ]
+        ]
+    },
+    {
+        "id": "d5f340118dcc02b8",
+        "type": "comment",
+        "z": "d36dc3460322383a",
+        "name": "Muss Post sein, Get funktioniert nicht",
+        "info": "",
+        "x": 230,
+        "y": 1220,
+        "wires": []
+    },
+    {
+        "id": "0c51513458a32773",
+        "type": "debug",
+        "z": "d36dc3460322383a",
+        "name": "debug 15",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 720,
+        "y": 1300,
+        "wires": []
+    },
+    {
+        "id": "e07f836c7f7b9940",
+        "type": "amqp-broker",
+        "name": "rabbitmq",
+        "host": "192.168.178.75",
+        "port": "5672",
+        "vhost": "",
+        "tls": false,
+        "credsFromSettings": false
+    },
+    {
+        "id": "de8efd55fbc380cc",
+        "type": "postgreSQLConfig",
+        "name": "postgres",
+        "host": "192.168.178.75",
+        "hostFieldType": "str",
+        "port": "5432",
+        "portFieldType": "num",
+        "database": "ueberwachungbuffet",
+        "databaseFieldType": "str",
+        "ssl": "false",
+        "sslFieldType": "bool",
+        "applicationName": "nodered",
+        "applicationNameType": "str",
+        "max": "10",
+        "maxFieldType": "num",
+        "idle": "1000",
+        "idleFieldType": "num",
+        "connectionTimeout": "10000",
+        "connectionTimeoutFieldType": "num",
+        "user": "admin",
+        "userFieldType": "str",
+        "password": "admin",
+        "passwordFieldType": "str"
+    }
+]
