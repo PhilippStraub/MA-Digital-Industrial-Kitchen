@@ -51,7 +51,7 @@ In Portainer die Container ID von allen außer dem Wächter-Container für den s
 Anschließend die Konfigurationen für MQTT & AMQP Broker sowie für Postgres auf die eigene Umgebung anpassen. Im Wächter-Container die 4 Nodes mit dem Titel „Restart node red via Portainer“ ausfündig machen (rechts unten) und die URL auf die eigene Umgebung anzupassen sowie die zuvor kopierten Container IDs an der entsprechenden Stelle der URL ersetzen.
 
 ## 5.	Basis Setup Überwachung Edge
-Auf das zweite System wechseln und die bereitgestellte ueberwachungedge.tar in Docker importieren. Anschließend folgende Befehle in die Kommandozeile einfügen und ausführen (Imageverweis ist zu aktualisieren, Port nach außen kann angepasst werden):
+Auf das zweite System wechseln und die bereitgestellte [ueberwachungedge.tar](https://drive.google.com/file/d/1PBWBVkqwGMdzFdLC1KWDKTbiOtljkmSe/view?usp=sharing) in Docker importieren (Google Drive Link aufgrund der Größe der Datei). Alternativ kann mit den zur Verfügung gestellten Dateien ein eigenes Image erstellt werden (siehe dazu Anleitung [hier](https://nodejs.org/en/docs/guides/nodejs-docker-webapp)). Anschließend folgende Befehle in die Kommandozeile einfügen und ausführen (Imageverweis ist zu aktualisieren, Port nach außen kann angepasst werden):
 
 `docker run --name eu111 -p 3111:3111 -e "NUM1=1" -e "NUM2=1" -e "NUM3=1" --restart unless-stopped -d philipp/edgeueberwachung`\
 `docker run --name eu112 -p 3112:3112 -e "NUM1=1" -e "NUM2=1" -e "NUM3=2" --restart unless-stopped -d philipp/edgeueberwachung`\
