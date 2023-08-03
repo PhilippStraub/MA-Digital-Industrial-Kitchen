@@ -1,7 +1,7 @@
 # MA-Digital-Industrial-Kitchen
 
 ## Übersicht Prototyp Stack
-<img src="./Stack-Prototyp.png" width="800">
+<img src="./Prototyp/Stack-Prototyp.png" width="800">
 
 ## Übersicht Installationsschritte Prototyp
 1. Basis Installation
