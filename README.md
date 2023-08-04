@@ -1,4 +1,5 @@
 # MA-Digital-Industrial-Kitchen
+In diesem Repository sind Ergebnisse der Masterthesis zum Thema „Eine Übersicht und exemplarische Anwendung von Szenario-basierter Digitalisierung mit IoT in Küchen von kleinen und mittelständischen Unternehmen“ aufgeführt. Die Zusammenhänge ergeben sich aus dem bereitgestellten Dokument MA_Digital_Industrial_Kitchen. Der primäre Zweck ist neben der Zugänglichkeit der Ergebnisse für die Öffentlichkeit, die Bereitstellung der ArchiMate Modelle sowie der Dateien und Anleitung für den erstellten Prototyp. Diese ist nachfolgend aufgeführt.
 
 ## Übersicht Prototyp Stack
 <img src="./Prototyp/Stack-Prototyp.png" width="800">
